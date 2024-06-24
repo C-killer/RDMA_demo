@@ -166,3 +166,15 @@ wr.invalidate_rkey = remote_rkey;  // 设置要无效化的远程键
 ### 用途
 
 IBV_WR_ATOMIC_WRITE 操作用于执行远程的原子写操作。原子操作确保对共享数据的访问和修改是同步且一致的，这在需要多节点协调更新单一数据项时非常重要。
+
+```cpp
+struct ibv_send_wr wr, *bad_wr;
+memset(&wr, 0, sizeof(wr));
+wr.wr_id = 0;
+wr.opcode = IBV_WR_ATOMIC_WRITE;
+wr.send_flags = IBV_SEND_SIGNALED;
+wr.wr.atomic.remote_addr = remote_addr;  // 远程地址
+wr.wr.atomic.rkey = remote_rkey;         // 远程键
+wr.wr.atomic.compare_add = 1;            // 比较值, 用于CAS
+wr.wr.atomic.swap = new_value;           // 要写入的值
+```
