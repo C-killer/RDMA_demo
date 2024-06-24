@@ -150,6 +150,17 @@ wr.imm_data = htonl(12345);            // 设置立即数据
 
 IBV_WR_SEND_WITH_INV 操作用于发送数据并同时无效化远程内存区域的注册。该操作可以用于通知远程节点特定的内存区域已经不再有效，确保接收方不会再对该区域执行访问。
 
+```cpp
+struct ibv_send_wr wr, *bad_wr;
+memset(&wr, 0, sizeof(wr));
+wr.wr_id = 0;
+wr.opcode = IBV_WR_SEND_WITH_INV;
+wr.sg_list = &sge;
+wr.num_sge = 1;
+wr.send_flags = IBV_SEND_SIGNALED;
+wr.invalidate_rkey = remote_rkey;  // 设置要无效化的远程键
+```
+
 ## 3. IBV_WR_ATOMIC_WRITE
 
 ### 用途
